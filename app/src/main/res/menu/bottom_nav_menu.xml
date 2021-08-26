@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/ic_filters"
+        android:title="@string/txt_filters"
+        android:icon="@drawable/filter_icon"/>
+
+    <item
+        android:id="@+id/ic_stickers"
+        android:title="@string/txt_stickers"
+        android:icon="@drawable/sticker_icon"/>
+    <item
+        android:id="@+id/ic_pro"
+        android:title="@string/pro"
+        android:icon="@drawable/pro_icon"/>
+
+    <item
+        android:id="@+id/ic_fonts"
+        android:title="@string/fonts"
+        android:icon="@drawable/font_icon"/>
+
+    <item
+        android:id="@+id/ic_snack_video"
+        android:title="@string/snack_video"
+        android:icon="@drawable/snack_icon"
+        />
+
+</menu>

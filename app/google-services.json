@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1008709567828",
+    "project_id": "photo-editor-pro-6e5cf",
+    "storage_bucket": "photo-editor-pro-6e5cf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1008709567828:android:4b525676aab09e5a3d34c1",
+        "android_client_info": {
+          "package_name": "com.photo.editor.picskills.photoeditorpro"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1008709567828-cug9tj1b0dprfqftrc0g53f6kg9v7llf.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCX90A7qsWvx0FYswQdjW3tY_36B2idiyU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1008709567828-cug9tj1b0dprfqftrc0g53f6kg9v7llf.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

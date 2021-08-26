@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="60dp"
+    android:layout_height="60dp"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/edit_pic_item"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:contentDescription="@string/rectangle"
+        android:background="@drawable/filter_icon_background"
+        android:layout_gravity="center"
+        android:src="@drawable/pink" />
+
+    <TextView
+        android:id="@+id/fiter_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/txt_filters"
+        android:textColor="@color/white"
+        android:textSize="13sp" />
+</LinearLayout>
