@@ -74,11 +74,6 @@ public class CameraTestActivity extends AppCompatActivity implements View.OnClic
     final long PERIOD_MS = 3000;
     int NUM_PAGES = 3;*/
 
-    //ads variables
-    private static final String TAG = "CameraTestActivity";
-
-    private InterstitialAd interstitialAd;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -118,11 +113,6 @@ public class CameraTestActivity extends AppCompatActivity implements View.OnClic
         }, DELAY_MS, PERIOD_MS);*/
 
         //load interstitial ad
-        if (SupportedClass.checkConnection(this)) {
-            loadAd();
-        } else {
-            Log.e("Interstitial", "Failed to load");
-        }
 
     }
 
@@ -221,12 +211,11 @@ public class CameraTestActivity extends AppCompatActivity implements View.OnClic
                 }
                 Bitmap bitmap = ImageUtils.compressImage(mSelectedImageUri.toString(), getApplicationContext());
                 mSelectedImageUri = getFileUri(bitmap);
-              /*  if (SupportedClass.stringIsNotEmpty(mSelectedImagePath)) {
+                if (SupportedClass.stringIsNotEmpty(mSelectedImagePath)) {
                     Intent intent = new Intent(this, EditingPicActivity.class);
                     intent.putExtra("bitmap", mSelectedImageUri.toString());
                     startActivity(intent);
-                }*/
-                showInterstitial();
+                }
 
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -384,79 +373,5 @@ public class CameraTestActivity extends AppCompatActivity implements View.OnClic
     @Override
     public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
         permissionToken.continuePermissionRequest();
-    }
-
-    public void loadAd() {
-        AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(
-                this,
-                getString(R.string.admob_interstitial_ads_id),
-                adRequest,
-                new InterstitialAdLoadCallback() {
-                    @Override
-                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                        // The mInterstitialAd reference will be null until
-                        // an ad is loaded.
-                        CameraTestActivity.this.interstitialAd = interstitialAd;
-                        Log.i(TAG, "onAdLoaded");
-                        interstitialAd.setFullScreenContentCallback(
-                                new FullScreenContentCallback() {
-                                    @Override
-                                    public void onAdDismissedFullScreenContent() {
-                                        // Called when fullscreen content is dismissed.
-                                        // Make sure to set your reference to null so you don't
-                                        // show it a second time.
-                                        CameraTestActivity.this.interstitialAd = null;
-                                        if (SupportedClass.stringIsNotEmpty(mSelectedImagePath)) {
-                                            Intent intent = new Intent(getApplicationContext(), EditingPicActivity.class);
-                                            intent.putExtra("bitmap", mSelectedImageUri.toString());
-                                            startActivity(intent);
-                                        }
-                                        Log.d("TAG", "The ad was dismissed.");
-                                    }
-
-                                    @Override
-                                    public void onAdFailedToShowFullScreenContent(AdError adError) {
-                                        // Called when fullscreen content failed to show.
-                                        // Make sure to set your reference to null so you don't
-                                        // show it a second time.
-                                        CameraTestActivity.this.interstitialAd = null;
-                                        Log.d("TAG", "The ad failed to show.");
-                                    }
-
-                                    @Override
-                                    public void onAdShowedFullScreenContent() {
-                                        // Called when fullscreen content is shown.
-                                        Log.d("TAG", "The ad was shown.");
-                                    }
-                                });
-                    }
-
-                    @Override
-                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                        // Handle the error
-                        Log.i(TAG, loadAdError.getMessage());
-                        interstitialAd = null;
-                        String error =
-                                String.format(
-                                        "domain: %s, code: %d, message: %s",
-                                        loadAdError.getDomain(), loadAdError.getCode(), loadAdError.getMessage());
-                        Log.e("Interstitial", error);
-                    }
-                });
-    }
-
-    private void showInterstitial() {
-        // Show the ad if it's ready. Otherwise toast and restart the game.
-        if (interstitialAd != null) {
-            interstitialAd.show(this);
-        } else {
-            Log.e("Ad","Ad did not load");
-            if (SupportedClass.stringIsNotEmpty(mSelectedImagePath)) {
-                Intent intent = new Intent(this, EditingPicActivity.class);
-                intent.putExtra("bitmap", mSelectedImageUri.toString());
-                startActivity(intent);
-            }
-        }
     }
 }

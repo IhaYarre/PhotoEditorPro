@@ -144,12 +144,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
             android:layout_weight="1"
             android:text="@string/wings"
             android:textColor="@color/white"
             android:textSize="14sp" />
-        <TextView
+        <!--<TextView
             android:id="@+id/drip"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -157,7 +156,7 @@
             android:layout_weight="1"
             android:text="Dp"
             android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:textSize="14sp" />-->
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView

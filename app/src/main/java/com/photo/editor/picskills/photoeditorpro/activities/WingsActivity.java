@@ -40,6 +40,12 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdError;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.FullScreenContentCallback;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.material.tabs.TabLayout;
 import com.photo.editor.picskills.photoeditorpro.R;
 import com.photo.editor.picskills.photoeditorpro.activities.erase_tool.StickerEraseActivity;
@@ -91,7 +97,9 @@ public class WingsActivity extends ParentActivity implements MenuItemClickLister
     private LinearLayout linThirdDivisionOption, linEffect, linBackgroundBlur;
     private TabLayout tabLayout;
     private String oldSavedFileName;
-
+    //ads variables
+    private static final String TAG = "WingsActivity";
+    private InterstitialAd interstitialAd;
 
     public static void setFaceBitmap(Bitmap bitmap) {
         faceBitmap = bitmap;
@@ -132,6 +140,11 @@ public class WingsActivity extends ParentActivity implements MenuItemClickLister
         }
         Init();
         setTollbarData();
+        if (SupportedClass.checkConnection(this)) {
+            loadInterstitialAd();
+        } else {
+            Log.e("Interstitial", "Failed to load");
+        }
     }
 
     private void initBMPNew() {
@@ -759,13 +772,83 @@ public class WingsActivity extends ParentActivity implements MenuItemClickLister
                 /*FullScreenAdManager.fullScreenAdsCheckPref(WingsActivity.this, FullScreenAdManager.ALL_PREFS.ATTR_ON_SHARE_SCREEN, new FullScreenAdManager.GetBackPointer() {
                     @Override
                     public void returnAction() {*/
-                openShareActivity();
+                showInterstitial();
                /*     }
                 });*/
 
 
             } else {
                 Toast.makeText(WingsActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    public void loadInterstitialAd() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        InterstitialAd.load(
+                this,
+                getString(R.string.admob_interstitial_ads_id),
+                adRequest,
+                new InterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                        // The mInterstitialAd reference will be null until
+                        // an ad is loaded.
+                        WingsActivity.this.interstitialAd = interstitialAd;
+                        Log.i(TAG, "onAdLoaded");
+                        interstitialAd.setFullScreenContentCallback(
+                                new FullScreenContentCallback() {
+                                    @Override
+                                    public void onAdDismissedFullScreenContent() {
+                                        // Called when fullscreen content is dismissed.
+                                        // Make sure to set your reference to null so you don't
+                                        // show it a second time.
+                                        WingsActivity.this.interstitialAd = null;
+                                        if (savedImageUri != null) {
+                                            Log.e("Ad", "Ad did not load");
+                                            openShareActivity();
+                                        }
+                                        Log.d("TAG", "The ad was dismissed.");
+                                    }
+
+                                    @Override
+                                    public void onAdFailedToShowFullScreenContent(AdError adError) {
+                                        // Called when fullscreen content failed to show.
+                                        // Make sure to set your reference to null so you don't
+                                        // show it a second time.
+                                        WingsActivity.this.interstitialAd = null;
+                                        Log.d("TAG", "The ad failed to show.");
+                                    }
+
+                                    @Override
+                                    public void onAdShowedFullScreenContent() {
+                                        // Called when fullscreen content is shown.
+                                        Log.d("TAG", "The ad was shown.");
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        // Handle the error
+                        Log.i(TAG, loadAdError.getMessage());
+                        interstitialAd = null;
+                        String error =
+                                String.format(
+                                        "domain: %s, code: %d, message: %s",
+                                        loadAdError.getDomain(), loadAdError.getCode(), loadAdError.getMessage());
+                        Log.e("Interstitial", error);
+                    }
+                });
+    }
+
+    private void showInterstitial() {
+        // Show the ad if it's ready. Otherwise toast and restart the game.
+        if (interstitialAd != null) {
+            interstitialAd.show(this);
+        } else {
+            if (savedImageUri != null) {
+                Log.e("Ad", "Ad did not load");
+                openShareActivity();
             }
         }
     }

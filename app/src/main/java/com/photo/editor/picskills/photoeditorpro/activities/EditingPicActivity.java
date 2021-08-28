@@ -42,11 +42,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.interstitial.InterstitialAd;
+import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.gson.Gson;
 import com.kaopiz.kprogresshud.KProgressHUD;
 import com.photo.editor.picskills.photoeditorpro.BuildConfig;
@@ -59,6 +63,7 @@ import com.photo.editor.picskills.photoeditorpro.crop_img.newCrop.StoreManager;
 import com.photo.editor.picskills.photoeditorpro.model.GradientFilterModel;
 import com.photo.editor.picskills.photoeditorpro.model.SimpleFilterModel;
 import com.photo.editor.picskills.photoeditorpro.utils.Constants;
+import com.photo.editor.picskills.photoeditorpro.utils.support.SupportedClass;
 
 import org.json.JSONArray;
 
@@ -92,7 +97,7 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
     private Handler handler = new Handler(Looper.getMainLooper());
     private Bitmap originalBitmap = null;
     private ImageView btnPersonImage, btnBack, btnApply;
-    private TextView txtFilter, txtGradient, txtBlur, txtBlackWhite, txtSpiral, txtWings, txtDrip;
+    private TextView txtFilter, txtGradient, txtBlur, txtBlackWhite, txtSpiral, txtWings;// txtDrip;
     private AppCompatSeekBar seekBar;
     private LinearLayout linearLayout;
     private FrameLayout frameLayout;
@@ -114,6 +119,12 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
     private Uri sourceUri;
     private Uri destinationUri;
 
+    //ads variables
+    private static final String TAG = "EditingPicActivity";
+
+    private InterstitialAd interstitialAd;
+    private Uri uri;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,7 +145,7 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
         txtFilter = findViewById(R.id.filter);
         txtGradient = findViewById(R.id.gradient);
         txtSpiral = findViewById(R.id.spiral);
-        txtDrip = findViewById(R.id.drip);
+        //txtDrip = findViewById(R.id.drip);
         txtWings = findViewById(R.id.wings);
         seekBar = findViewById(R.id.seekbar);
         linearLayout = findViewById(R.id.mAdView);
@@ -172,7 +183,7 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
         txtBlackWhite.setOnClickListener(this);
         txtSpiral.setOnClickListener(this);
         txtWings.setOnClickListener(this);
-        txtDrip.setOnClickListener(this);
+        //txtDrip.setOnClickListener(this);
         seekBar.setOnSeekBarChangeListener(this);
         //add items in list
         addItemSimpleList();
@@ -181,7 +192,11 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
         setSimpleFilterAdapter();
         setGradientFilterAdapter();
         loadAd();
-
+        if (SupportedClass.checkConnection(this)) {
+            loadInterstitialAd();
+        } else {
+            Log.e("Interstitial", "Failed to load");
+        }
     }
 
     private void getSourceProviderUri(File file) {
@@ -266,7 +281,6 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
             getBitmap(bitmapReturnString);
             bitmapReturnString = "";
         }
-
     }
 
     @Override
@@ -352,7 +366,7 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
                 values.put(MediaStore.Images.Media.IS_PENDING, true);*/
                 // RELATIVE_PATH and IS_PENDING are introduced in API 29.
 
-                Uri uri =
+                uri =
                         context.getContentResolver().insert(
                                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                                 values
@@ -361,11 +375,7 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
                     saveImageToStream(bitmap, context.getContentResolver().openOutputStream(uri));
                     values.put(MediaStore.Images.Media.IS_PENDING, false);
                     context.getContentResolver().update(uri, values, null, null);
-                    Intent intent = new Intent(EditingPicActivity.this, ShareSerpActivity.class);
-                    intent.putExtra(Constants.KEY_URI_IMAGE, uri.toString());
-                    startActivity(intent);
-                    finish();
-                    overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
+                    showInterstitial();
                 }
                 notifyMediaScannerService(EditingPicActivity.this, uri.getPath());
                 Toast.makeText(getApplicationContext(), "Image Saved Successfully!", Toast.LENGTH_SHORT)
@@ -385,16 +395,12 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
                     ContentValues values = new ContentValues();
                     values.put(MediaStore.Images.Media.DATA, file.getAbsolutePath());
                     // .DATA is deprecated in API 29
-                    Uri uri = context.getContentResolver().insert(
+                    uri = context.getContentResolver().insert(
                             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                             values
                     );
                     if (uri != null) {
-                        Intent intent = new Intent(EditingPicActivity.this, ShareSerpActivity.class);
-                        intent.putExtra(Constants.KEY_URI_IMAGE, uri.toString());
-                        startActivity(intent);
-                        finish();
-                        overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
+                        showInterstitial();
                     }
                     notifyMediaScannerService(EditingPicActivity.this, directory.getAbsolutePath());
                 }
@@ -447,7 +453,7 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
             txtBlur.setText(getResources().getString(R.string.blur));
             txtSpiral.setText(getResources().getString(R.string.spiral));
             txtWings.setText(getResources().getString(R.string.wings));
-            txtDrip.setText(getResources().getString(R.string.dp));
+            //txtDrip.setText(getResources().getString(R.string.dp));
         }
         if (v.getId() == R.id.gradient) {
             gradientFilterRecycler.setVisibility(View.VISIBLE);
@@ -457,7 +463,7 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
             txtBlur.setText(getResources().getString(R.string.blur));
             txtSpiral.setText(getResources().getString(R.string.spiral));
             txtWings.setText(getResources().getString(R.string.wings));
-            txtDrip.setText(getResources().getString(R.string.dp));
+            //txtDrip.setText(getResources().getString(R.string.dp));
             SpannableString content = new SpannableString(getResources().getString(R.string.gradient));
             content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
             txtGradient.setText(content);
@@ -477,7 +483,7 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
             txtBlackWhite.setText(getResources().getString(R.string.back_whaite));
             txtSpiral.setText(getResources().getString(R.string.spiral));
             txtWings.setText(getResources().getString(R.string.wings));
-            txtDrip.setText(getResources().getString(R.string.dp));
+            //txtDrip.setText(getResources().getString(R.string.dp));
             SpannableString content = new SpannableString(getResources().getString(R.string.blur));
             content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
             txtBlur.setText(content);
@@ -505,7 +511,7 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
             txtBlur.setText(getResources().getString(R.string.blur));
             txtSpiral.setText(getResources().getString(R.string.spiral));
             txtWings.setText(getResources().getString(R.string.wings));
-            txtDrip.setText(getResources().getString(R.string.dp));
+            //txtDrip.setText(getResources().getString(R.string.dp));
             SpannableString content = new SpannableString(getResources().getString(R.string.back_whaite));
             content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
             txtBlackWhite.setText(content);
@@ -532,7 +538,7 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
             txtBlur.setText(getResources().getString(R.string.blur));
             txtBlackWhite.setText(getResources().getString(R.string.back_whaite));
             txtWings.setText(getResources().getString(R.string.wings));
-            txtDrip.setText(getResources().getString(R.string.dp));
+            //txtDrip.setText(getResources().getString(R.string.dp));
             SpannableString content = new SpannableString(getResources().getString(R.string.spiral));
             content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
             txtSpiral.setText(content);
@@ -576,7 +582,7 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
             txtBlur.setText(getResources().getString(R.string.blur));
             txtBlackWhite.setText(getResources().getString(R.string.back_whaite));
             txtSpiral.setText(getResources().getString(R.string.spiral));
-            txtDrip.setText(getResources().getString(R.string.dp));
+            //txtDrip.setText(getResources().getString(R.string.dp));
             SpannableString content = new SpannableString(getResources().getString(R.string.wings));
             content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
             txtWings.setText(content);
@@ -608,48 +614,6 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
                     Intent intent = new Intent(this, WingsActivity.class);
                     //intent.putExtra("uri", bitmapString);
                     startActivity(intent);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-        }
-        if (v.getId() == R.id.drip) {
-            startAnim();
-            txtFilter.setText(getResources().getString(R.string.txt_filters));
-            txtGradient.setText(getResources().getString(R.string.gradient));
-            txtBlur.setText(getResources().getString(R.string.blur));
-            txtBlackWhite.setText(getResources().getString(R.string.back_whaite));
-            txtSpiral.setText(getResources().getString(R.string.spiral));
-            txtWings.setText(getResources().getString(R.string.wings));
-            SpannableString content = new SpannableString(getResources().getString(R.string.dp));
-            content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
-            txtDrip.setText(content);
-            //if filter is applied.
-            if (result != null && isFilterUri) {
-                try {
-                    StoreManager.setCurrentCropedBitmap(EditingPicActivity.this, (Bitmap) null);
-                    StoreManager.setCurrentCroppedMaskBitmap(EditingPicActivity.this, (Bitmap) null);
-
-                    Bitmap bitmap = Constants.getBitmapFromUriDrip(EditingPicActivity.this, destinationUri, (float) screenWidth, (float) screenHeight);
-                    DripEffectActivity.setFaceBitmap(bitmap);
-                    StoreManager.setCurrentOriginalBitmap(this, bitmap);
-
-                    startActivity(new Intent(EditingPicActivity.this, DripEffectActivity.class));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-            //send image without filter applied.
-            if (!bitmapString.equals("") && !isFilterUri) {
-                try {
-                    StoreManager.setCurrentCropedBitmap(EditingPicActivity.this, (Bitmap) null);
-                    StoreManager.setCurrentCroppedMaskBitmap(EditingPicActivity.this, (Bitmap) null);
-
-                    Bitmap bitmap = Constants.getBitmapFromUriDrip(EditingPicActivity.this, sourceUri, (float) screenWidth, (float) screenHeight);
-                    DripEffectActivity.setFaceBitmap(bitmap);
-                    StoreManager.setCurrentOriginalBitmap(this, bitmap);
-
-                    startActivity(new Intent(EditingPicActivity.this, DripEffectActivity.class));
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -1239,6 +1203,85 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+        }
+    }
+
+    public void loadInterstitialAd() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        InterstitialAd.load(
+                this,
+                getString(R.string.admob_interstitial_ads_id),
+                adRequest,
+                new InterstitialAdLoadCallback() {
+                    @Override
+                    public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                        // The mInterstitialAd reference will be null until
+                        // an ad is loaded.
+                        EditingPicActivity.this.interstitialAd = interstitialAd;
+                        Log.i(TAG, "onAdLoaded");
+                        interstitialAd.setFullScreenContentCallback(
+                                new FullScreenContentCallback() {
+                                    @Override
+                                    public void onAdDismissedFullScreenContent() {
+                                        // Called when fullscreen content is dismissed.
+                                        // Make sure to set your reference to null so you don't
+                                        // show it a second time.
+                                        EditingPicActivity.this.interstitialAd = null;
+                                        if (uri != null) {
+                                            Log.e("Ad", "Ad did not load");
+                                            Intent intent = new Intent(EditingPicActivity.this, ShareSerpActivity.class);
+                                            intent.putExtra(Constants.KEY_URI_IMAGE, uri.toString());
+                                            startActivity(intent);
+                                            finish();
+                                            overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
+                                        }
+                                        Log.d("TAG", "The ad was dismissed.");
+                                    }
+
+                                    @Override
+                                    public void onAdFailedToShowFullScreenContent(AdError adError) {
+                                        // Called when fullscreen content failed to show.
+                                        // Make sure to set your reference to null so you don't
+                                        // show it a second time.
+                                        EditingPicActivity.this.interstitialAd = null;
+                                        Log.d("TAG", "The ad failed to show.");
+                                    }
+
+                                    @Override
+                                    public void onAdShowedFullScreenContent() {
+                                        // Called when fullscreen content is shown.
+                                        Log.d("TAG", "The ad was shown.");
+                                    }
+                                });
+                    }
+
+                    @Override
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        // Handle the error
+                        Log.i(TAG, loadAdError.getMessage());
+                        interstitialAd = null;
+                        String error =
+                                String.format(
+                                        "domain: %s, code: %d, message: %s",
+                                        loadAdError.getDomain(), loadAdError.getCode(), loadAdError.getMessage());
+                        Log.e("Interstitial", error);
+                    }
+                });
+    }
+
+    private void showInterstitial() {
+        // Show the ad if it's ready. Otherwise toast and restart the game.
+        if (interstitialAd != null) {
+            interstitialAd.show(this);
+        } else {
+            if (uri != null) {
+                Log.e("Ad", "Ad did not load");
+                Intent intent = new Intent(EditingPicActivity.this, ShareSerpActivity.class);
+                intent.putExtra(Constants.KEY_URI_IMAGE, uri.toString());
+                startActivity(intent);
+                finish();
+                overridePendingTransition(R.anim.left_to_right, R.anim.right_to_left);
+            }
         }
     }
 

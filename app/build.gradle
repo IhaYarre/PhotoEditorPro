@@ -16,8 +16,8 @@ android {
         applicationId "com.photo.editor.picskills.photoeditorpro"
         minSdkVersion 18
         targetSdkVersion 30
-        versionCode 5
-        versionName "1.4"
+        versionCode 7
+        versionName "1.6"
         multiDexEnabled true
         renderscriptTargetApi 19
 
