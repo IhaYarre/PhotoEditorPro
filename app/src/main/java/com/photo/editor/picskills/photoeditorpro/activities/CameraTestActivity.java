@@ -65,6 +65,7 @@ public class CameraTestActivity extends AppCompatActivity implements View.OnClic
     public Uri mSelectedImageUri;
     protected static final int REQUEST_CODE_CAMERA = 0x2;
     protected static final int REQUEST_CODE_GALLERY = 0x3;
+    protected static final int REQUEST_CODE_CROPPING = 0x4;
     private int isGallerySelected = 0;
     //private LinearLayout linearRate;
     //Timer variablse
@@ -188,33 +189,43 @@ public class CameraTestActivity extends AppCompatActivity implements View.OnClic
                         } else {
                             mSelectedImageUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", fileImageClick);
                         }
-                        Intent intent = new Intent(this, EditingPicActivity.class);
-                        intent.putExtra("bitmap", mSelectedImageUri.toString());
-                        startActivity(intent);
+                        Intent intent = new Intent(CameraTestActivity.this, CropPhotoActivity.class);
+                        intent.putExtra("cropUri", mSelectedImageUri.toString());
+                        startActivityForResult(intent, REQUEST_CODE_CROPPING);
                     }
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
 
-        } else if (resultCode == RESULT_OK && data != null) {
+        } else if (resultCode == RESULT_OK && data != null && requestCode == REQUEST_CODE_GALLERY) {
             try {
-                if (requestCode == REQUEST_CODE_GALLERY) {
-                    mSelectedImageUri = data.getData();
-                    if (mSelectedImageUri != null) {
-                        mSelectedImagePath = Constants.convertMediaUriToPath(this, mSelectedImageUri);
-                    } else {
-                        Toast.makeText(this, getString(R.string.please_try_again), Toast.LENGTH_SHORT).show();
+                mSelectedImageUri = data.getData();
+                if (mSelectedImageUri != null) {
+                    mSelectedImagePath = Constants.convertMediaUriToPath(this, mSelectedImageUri);
+                    Bitmap bitmap = ImageUtils.compressImage(mSelectedImageUri.toString(), getApplicationContext());
+                    mSelectedImageUri = getFileUri(bitmap);
+                    if (SupportedClass.stringIsNotEmpty(mSelectedImagePath)) {
+                        Intent intent = new Intent(CameraTestActivity.this, CropPhotoActivity.class);
+                        intent.putExtra("cropUri", mSelectedImageUri.toString());
+                        startActivityForResult(intent, REQUEST_CODE_CROPPING);
                     }
                 } else {
-                    mSelectedImagePath = mSelectedOutputPath;
+                    Toast.makeText(this, getString(R.string.please_try_again), Toast.LENGTH_SHORT).show();
                 }
-                Bitmap bitmap = ImageUtils.compressImage(mSelectedImageUri.toString(), getApplicationContext());
-                mSelectedImageUri = getFileUri(bitmap);
-                if (SupportedClass.stringIsNotEmpty(mSelectedImagePath)) {
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+        } else if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_CROPPING && data != null) {
+            try {
+                if (data.hasExtra("croppedUri")) {
+                    // handleUri((Uri) data.getParcelableExtra("croppedUri"));
+                    mSelectedImageUri = data.getParcelableExtra("croppedUri");
                     Intent intent = new Intent(this, EditingPicActivity.class);
                     intent.putExtra("bitmap", mSelectedImageUri.toString());
                     startActivity(intent);
+                    overridePendingTransition(R.anim.enter, R.anim.exit);
                 }
 
             } catch (Exception ex) {

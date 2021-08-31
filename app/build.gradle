@@ -78,6 +78,9 @@ dependencies {
     implementation 'com.kaopiz:kprogresshud:1.2.0'
     //adding native templates
     implementation project(':nativetemplates')
+    // for crop
+    api 'io.reactivex.rxjava2:rxjava:2.2.8'
+    api 'io.reactivex.rxjava2:rxandroid:2.1.1'
 }
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'

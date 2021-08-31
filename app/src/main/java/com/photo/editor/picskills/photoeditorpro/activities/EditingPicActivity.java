@@ -1260,11 +1260,6 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
                         // Handle the error
                         Log.i(TAG, loadAdError.getMessage());
                         interstitialAd = null;
-                        String error =
-                                String.format(
-                                        "domain: %s, code: %d, message: %s",
-                                        loadAdError.getDomain(), loadAdError.getCode(), loadAdError.getMessage());
-                        Log.e("Interstitial", error);
                     }
                 });
     }
