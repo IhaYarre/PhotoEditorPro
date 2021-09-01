@@ -22,6 +22,10 @@ public class CropPhotoActivity extends ParentActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_crop_photo);
+        if (getSupportActionBar()
+                != null) {
+            this.getSupportActionBar().hide();
+        }
         Thread.setDefaultUncaughtExceptionHandler(new MyExceptionHandlerPix(CropPhotoActivity.this));
 
         RelativeLayout mAdView = findViewById(R.id.adView);

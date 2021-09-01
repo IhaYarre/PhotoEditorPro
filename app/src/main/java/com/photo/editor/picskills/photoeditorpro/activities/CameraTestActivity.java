@@ -222,10 +222,19 @@ public class CameraTestActivity extends AppCompatActivity implements View.OnClic
                 if (data.hasExtra("croppedUri")) {
                     // handleUri((Uri) data.getParcelableExtra("croppedUri"));
                     mSelectedImageUri = data.getParcelableExtra("croppedUri");
-                    Intent intent = new Intent(this, EditingPicActivity.class);
-                    intent.putExtra("bitmap", mSelectedImageUri.toString());
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.enter, R.anim.exit);
+                    Bitmap bitmap = null;
+                    try {
+                        bitmap = Constants.getBitmapFromUriDrip(CameraTestActivity.this, mSelectedImageUri, 1024.0f, 1024.0f);
+                        mSelectedImageUri = getFileUri(bitmap);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if (bitmap != null) {
+                        Intent intent = new Intent(this, EditingPicActivity.class);
+                        intent.putExtra("bitmap", mSelectedImageUri.toString());
+                        startActivity(intent);
+                        overridePendingTransition(R.anim.enter, R.anim.exit);
+                    }
                 }
 
             } catch (Exception ex) {
