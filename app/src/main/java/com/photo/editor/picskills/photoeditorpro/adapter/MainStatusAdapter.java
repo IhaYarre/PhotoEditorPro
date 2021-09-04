@@ -39,10 +39,8 @@ public class MainStatusAdapter extends RecyclerView.Adapter<MainStatusAdapter.St
     @Override
     public void onBindViewHolder(MainStatusAdapter.StatusViewHolder holder, int position) {
         AppDesignModel collageDrawableItem = mainStatusList.get(position);
-
         holder.collageItem.setImageDrawable(collageDrawableItem.getDrawable());
         holder.txtFilter.setText(collageDrawableItem.getText());
-
         holder.view.setOnClickListener(v -> listener.mainStatusClick(collageDrawableItem, position));
     }
 

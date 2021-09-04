@@ -171,9 +171,6 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
                 ex.printStackTrace();
             }
         });
-        SpannableString content = new SpannableString(getResources().getString(R.string.txt_filters));
-        content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
-        txtFilter.setText(content);
         btnPersonImage.setOnClickListener(this);
         btnBack.setOnClickListener(this);
         btnApply.setOnClickListener(this);
@@ -183,6 +180,7 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
         txtBlackWhite.setOnClickListener(this);
         txtSpiral.setOnClickListener(this);
         txtWings.setOnClickListener(this);
+        modelSelected();
         //txtDrip.setOnClickListener(this);
         seekBar.setOnSeekBarChangeListener(this);
         //add items in list
@@ -196,6 +194,27 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
             loadInterstitialAd();
         } else {
             Log.e("Interstitial", "Failed to load");
+        }
+    }
+
+    private void modelSelected() {
+        if (MainActivity.isModelSelected == 0) {
+            txtWings.performClick();
+        }
+        if (MainActivity.isModelSelected == 1) {
+            txtSpiral.performClick();
+        }
+        if (MainActivity.isModelSelected == 2) {
+            txtBlur.performClick();
+        }
+        if (MainActivity.isModelSelected == 3) {
+            txtBlackWhite.performClick();
+        }
+        if (MainActivity.isModelSelected == 4) {
+            txtFilter.performClick();
+        }
+        if (MainActivity.isModelSelected == 5) {
+            txtGradient.performClick();
         }
     }
 
@@ -449,7 +468,7 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
             content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
             txtFilter.setText(content);
             txtGradient.setText(getResources().getString(R.string.gradient));
-            txtBlackWhite.setText(getResources().getString(R.string.back_whaite));
+            txtBlackWhite.setText(getResources().getString(R.string.black_white));
             txtBlur.setText(getResources().getString(R.string.blur));
             txtSpiral.setText(getResources().getString(R.string.spiral));
             txtWings.setText(getResources().getString(R.string.wings));
@@ -459,7 +478,7 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
             gradientFilterRecycler.setVisibility(View.VISIBLE);
             simpleFilterRecycler.setVisibility(View.GONE);
             txtFilter.setText(getResources().getString(R.string.txt_filters));
-            txtBlackWhite.setText(getResources().getString(R.string.back_whaite));
+            txtBlackWhite.setText(getResources().getString(R.string.black_white));
             txtBlur.setText(getResources().getString(R.string.blur));
             txtSpiral.setText(getResources().getString(R.string.spiral));
             txtWings.setText(getResources().getString(R.string.wings));
@@ -480,7 +499,7 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
             startAnim();
             txtFilter.setText(getResources().getString(R.string.txt_filters));
             txtGradient.setText(getResources().getString(R.string.gradient));
-            txtBlackWhite.setText(getResources().getString(R.string.back_whaite));
+            txtBlackWhite.setText(getResources().getString(R.string.black_white));
             txtSpiral.setText(getResources().getString(R.string.spiral));
             txtWings.setText(getResources().getString(R.string.wings));
             //txtDrip.setText(getResources().getString(R.string.dp));
@@ -512,7 +531,7 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
             txtSpiral.setText(getResources().getString(R.string.spiral));
             txtWings.setText(getResources().getString(R.string.wings));
             //txtDrip.setText(getResources().getString(R.string.dp));
-            SpannableString content = new SpannableString(getResources().getString(R.string.back_whaite));
+            SpannableString content = new SpannableString(getResources().getString(R.string.black_white));
             content.setSpan(new UnderlineSpan(), 0, content.length(), 0);
             txtBlackWhite.setText(content);
             //if filter is applied.
@@ -536,7 +555,7 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
             txtFilter.setText(getResources().getString(R.string.txt_filters));
             txtGradient.setText(getResources().getString(R.string.gradient));
             txtBlur.setText(getResources().getString(R.string.blur));
-            txtBlackWhite.setText(getResources().getString(R.string.back_whaite));
+            txtBlackWhite.setText(getResources().getString(R.string.black_white));
             txtWings.setText(getResources().getString(R.string.wings));
             //txtDrip.setText(getResources().getString(R.string.dp));
             SpannableString content = new SpannableString(getResources().getString(R.string.spiral));
@@ -580,7 +599,7 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
             txtFilter.setText(getResources().getString(R.string.txt_filters));
             txtGradient.setText(getResources().getString(R.string.gradient));
             txtBlur.setText(getResources().getString(R.string.blur));
-            txtBlackWhite.setText(getResources().getString(R.string.back_whaite));
+            txtBlackWhite.setText(getResources().getString(R.string.black_white));
             txtSpiral.setText(getResources().getString(R.string.spiral));
             //txtDrip.setText(getResources().getString(R.string.dp));
             SpannableString content = new SpannableString(getResources().getString(R.string.wings));

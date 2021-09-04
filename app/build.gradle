@@ -81,6 +81,8 @@ dependencies {
     // for crop
     api 'io.reactivex.rxjava2:rxjava:2.2.8'
     api 'io.reactivex.rxjava2:rxandroid:2.1.1'
+    //stories
+    implementation 'com.github.shts:StoriesProgressView:3.0.0'
 }
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'com.google.firebase.crashlytics'

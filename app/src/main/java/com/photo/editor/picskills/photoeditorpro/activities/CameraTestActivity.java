@@ -1,6 +1,5 @@
 package com.photo.editor.picskills.photoeditorpro.activities;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.FileProvider;
@@ -17,8 +16,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
@@ -29,12 +26,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.ads.AdError;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.FullScreenContentCallback;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -43,7 +34,6 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.photo.editor.picskills.photoeditorpro.BuildConfig;
 import com.photo.editor.picskills.photoeditorpro.R;
 import com.photo.editor.picskills.photoeditorpro.adapter.ViewPagerAdapter;
-import com.photo.editor.picskills.photoeditorpro.fragments.SliderOne;
 import com.photo.editor.picskills.photoeditorpro.fragments.SliderTwo;
 import com.photo.editor.picskills.photoeditorpro.utils.Constants;
 import com.photo.editor.picskills.photoeditorpro.utils.ImageUtils;
@@ -55,8 +45,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class CameraTestActivity extends AppCompatActivity implements View.OnClickListener, MultiplePermissionsListener {
     private ImageView gallery, cameraImage;
@@ -68,12 +56,6 @@ public class CameraTestActivity extends AppCompatActivity implements View.OnClic
     protected static final int REQUEST_CODE_CROPPING = 0x4;
     private int isGallerySelected = 0;
     //private LinearLayout linearRate;
-    //Timer variablse
-   /* int currentPage = 0;
-    Timer timer;
-    final long DELAY_MS = 3000;//delay in milliseconds before task is to be executed
-    final long PERIOD_MS = 3000;
-    int NUM_PAGES = 3;*/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,25 +78,6 @@ public class CameraTestActivity extends AppCompatActivity implements View.OnClic
 
         ViewPagerAdapter adapter = new ViewPagerAdapter(this, fragment);
         viewPager2.setAdapter(adapter);
-        /*After setting the adapter use the timer */
-/*        final Handler handler = new Handler(Looper.getMainLooper());
-        final Runnable Update = () -> {
-            if (currentPage == NUM_PAGES - 1) {
-                currentPage = 0;
-            }
-            viewPager2.setCurrentItem(currentPage++, true);
-        };
-
-        timer = new Timer(); // This will create a new Thread
-        timer.schedule(new TimerTask() { // task to be scheduled
-            @Override
-            public void run() {
-                handler.post(Update);
-            }
-        }, DELAY_MS, PERIOD_MS);*/
-
-        //load interstitial ad
-
     }
 
     private void showRateDialog() {

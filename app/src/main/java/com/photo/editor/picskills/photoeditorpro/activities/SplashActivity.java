@@ -11,6 +11,7 @@ import com.photo.editor.picskills.photoeditorpro.R;
 
 public class SplashActivity extends AppCompatActivity {
     private final Handler handler = new Handler(Looper.getMainLooper());
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,7 +21,7 @@ public class SplashActivity extends AppCompatActivity {
             this.getSupportActionBar().hide();
         }
         handler.postDelayed(() -> {
-            startActivity(new Intent(SplashActivity.this,CameraTestActivity.class));
+            startActivity(new Intent(SplashActivity.this, MainActivity.class));
             finish();
         }, 2000);
     }

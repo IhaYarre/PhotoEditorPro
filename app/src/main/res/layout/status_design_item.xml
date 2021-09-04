@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="60dp"
     android:layout_height="60dp"
+    android:layout_marginTop="5dp"
     android:gravity="center"
     android:orientation="vertical">
 
@@ -9,8 +10,7 @@
         android:id="@+id/edit_pic_item"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:background="@color/white"
-        android:contentDescription="@string/rectangle"
+        android:background="@color/transparent"
         android:layout_gravity="center"
         android:src="@drawable/pink" />
 
