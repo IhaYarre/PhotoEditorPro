@@ -49,7 +49,6 @@ import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.material.tabs.TabLayout;
 import com.photo.editor.picskills.photoeditorpro.R;
-import com.photo.editor.picskills.photoeditorpro.activities.erase_tool.StickerEraseActivity;
 import com.photo.editor.picskills.photoeditorpro.adapter.SpiralEffectListAdapter;
 import com.photo.editor.picskills.photoeditorpro.adapter.StickerAdapter;
 import com.photo.editor.picskills.photoeditorpro.callback.MenuItemClickLister;
@@ -617,7 +616,12 @@ public class SpiralSerpActivity extends ParentActivity implements MenuItemClickL
 
     private Uri getFileUri(Bitmap inImage) {
         try {
-            File tempDir = Environment.getExternalStorageDirectory();
+            File tempDir = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                tempDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+            } else {
+                tempDir = Environment.getExternalStorageDirectory();
+            }
             tempDir = new File(tempDir.getAbsolutePath() + "/.temp/");
             tempDir.mkdir();
             File tempFile = File.createTempFile("IMG_" + System.currentTimeMillis(), ".jpg", tempDir);

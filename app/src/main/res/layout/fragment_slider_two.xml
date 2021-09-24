@@ -6,12 +6,13 @@
     android:layout_height="wrap_content"
     tools:context=".fragments.SliderTwo">
 
-    <com.google.android.ads.nativetemplates.TemplateView
-        android:id="@+id/adLayout"
+    <ImageView
+        android:id="@+id/slide_image_one"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:gnt_template_type="@layout/gnt_medium_template_view" />
+        android:layout_height="288dp"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/main_page_second"
+        android:orientation="vertical" />
 
     <!--    <ImageView
             android:id="@+id/dotImage"

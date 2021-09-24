@@ -274,7 +274,12 @@ public class BlackWhiteActivity extends ParentActivity implements View.OnClickLi
 
     private Uri getUriFromFile(Bitmap inImage) {
         try {
-            File tempDir = Environment.getExternalStorageDirectory();
+            File tempDir = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                tempDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+            } else {
+                tempDir = Environment.getExternalStorageDirectory();
+            }
             tempDir = new File(tempDir.getAbsolutePath() + "/.temp/");
             tempDir.mkdir();
             File tempFile = File.createTempFile("IMG_" + System.currentTimeMillis(), ".jpg", tempDir);

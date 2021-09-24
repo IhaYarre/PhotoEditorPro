@@ -62,7 +62,6 @@ import com.photo.editor.picskills.photoeditorpro.R;
 import com.photo.editor.picskills.photoeditorpro.activities.EditingPicActivity;
 import com.photo.editor.picskills.photoeditorpro.activities.ParentActivity;
 import com.photo.editor.picskills.photoeditorpro.activities.ShareSerpActivity;
-import com.photo.editor.picskills.photoeditorpro.activities.black_white_tool.BlackWhiteActivity;
 import com.photo.editor.picskills.photoeditorpro.utils.Constants;
 import com.photo.editor.picskills.photoeditorpro.utils.support.MyExceptionHandlerPix;
 import com.photo.editor.picskills.photoeditorpro.utils.support.SupportedClass;
@@ -517,7 +516,12 @@ public class BlurSerpActivity extends ParentActivity implements OnClickListener,
 
     private Uri getFileUri(Bitmap inImage) {
         try {
-            File tempDir = Environment.getExternalStorageDirectory();
+            File tempDir = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                tempDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+            } else {
+                tempDir = Environment.getExternalStorageDirectory();
+            }
             tempDir = new File(tempDir.getAbsolutePath() + "/.temp/");
             tempDir.mkdir();
             File tempFile = File.createTempFile("IMG_" + System.currentTimeMillis(), ".jpg", tempDir);

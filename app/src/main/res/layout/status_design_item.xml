@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="60dp"
-    android:layout_height="60dp"
+    android:layout_width="72dp"
+    android:layout_height="72dp"
     android:layout_marginTop="5dp"
     android:gravity="center"
     android:orientation="vertical">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/edit_pic_item"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
         android:background="@color/transparent"
         android:layout_gravity="center"
         android:src="@drawable/pink" />
@@ -20,5 +20,5 @@
         android:layout_height="wrap_content"
         android:text="@string/txt_filters"
         android:textColor="@color/white"
-        android:textSize="13sp" />
+        android:textSize="14sp" />
 </LinearLayout>

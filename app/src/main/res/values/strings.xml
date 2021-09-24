@@ -71,16 +71,10 @@
     <string name="txt_file_delete_successfully">File Deleted Successfully</string>
 
     <!--original ads-->
-    <!--<string name="admob_application_id">ca-app-pub-1817418162195457~1938039372</string>
-    <string name="admob_banner_ads_id">ca-app-pub-1817418162195457/8710852352</string>
-    <string name="admob_native_ads_id">ca-app-pub-1817418162195457/6958786985</string>
-    <string name="admob_interstitial_ads_id">ca-app-pub-1817418162195457/2747755830</string>-->
-    <!--testing ads
-    Test Admob id-->
-    <string name="admob_application_id">ca-app-pub-3940256099942544~3347511713</string>
-    <string name="admob_banner_ads_id">ca-app-pub-3940256099942544/6300978111</string>
-    <string name="admob_native_ads_id">ca-app-pub-3940256099942544/2247696110</string>
-    <string name="admob_interstitial_ads_id">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="admob_application_id">ca-app-pub-9318142742302222~9941689882</string>
+    <string name="admob_banner_ads_id">ca-app-pub-9318142742302222/9690408449</string>
+    <!--<string name="admob_native_ads_id">ca-app-pub-9318142742302222/1217022056</string>-->
+    <string name="admob_interstitial_ads_id">ca-app-pub-9318142742302222/2906891137</string>
 
     <string name="font_pacifico">Pacifico-Regular.ttf</string>
     <string name="font_josefinSans_regular">JosefinSans-Regular.ttf</string>

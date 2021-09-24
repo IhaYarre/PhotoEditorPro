@@ -1,7 +1,6 @@
 package com.photo.editor.picskills.photoeditorpro.activities;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
@@ -30,7 +29,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -61,7 +59,6 @@ public class MainActivity extends ParentActivity implements
     private ArrayList<AppDesignModel> statusDesignList = new ArrayList();
     private MainStatusAdapter mainStatusAdapter;
     private RecyclerView statusRecycler;
-
     //open gallery for blur activity
     public String mSelectedImagePath;
     public String mSelectedOutputPath;
@@ -71,6 +68,9 @@ public class MainActivity extends ParentActivity implements
     protected static final int REQUEST_CODE_CROPPING = 0x4;
     private int isGallerySelected = 0;
     public static int isModelSelected;
+    private static MainActivity activity;
+    // android 11 permission
+    private boolean isRPermissionGranted;
 
 
     //Timer variablse
@@ -80,6 +80,14 @@ public class MainActivity extends ParentActivity implements
     final long PERIOD_MS = 3000;
     int NUM_PAGES = 3;
 
+    public static MainActivity getActivity() {
+        return activity;
+    }
+
+    public static void setActivity(MainActivity activity) {
+        MainActivity.activity = activity;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -87,6 +95,7 @@ public class MainActivity extends ParentActivity implements
         if (this.getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
+        setActivity(this);
         //ads
         RelativeLayout mAdView = findViewById(R.id.adView);
         loadBannerAds(mAdView);
@@ -97,6 +106,8 @@ public class MainActivity extends ParentActivity implements
         LinearLayout bAndWLinear = findViewById(R.id.b_and_w_linear);
         LinearLayout filterLinear = findViewById(R.id.filter_linear);
         LinearLayout gradientLinear = findViewById(R.id.gradient_linear);
+        LinearLayout galleryLinear = findViewById(R.id.gallery_linear);
+        LinearLayout cameraLinear = findViewById(R.id.camera_linear);
         ViewPager2 viewPager2 = findViewById(R.id.view_pager);
 
         spiralLinearLayout.setOnClickListener(this);
@@ -105,6 +116,8 @@ public class MainActivity extends ParentActivity implements
         blurLinear.setOnClickListener(this);
         filterLinear.setOnClickListener(this);
         gradientLinear.setOnClickListener(this);
+        cameraLinear.setOnClickListener(this);
+        galleryLinear.setOnClickListener(this);
 
         this.setDesignListItem();
         setStatusAdapater();
@@ -172,10 +185,10 @@ public class MainActivity extends ParentActivity implements
     }
 
     private void checkGalleryPermission() {
-        Dexter.withContext(this)
+        Dexter.withContext(getActivity())
                 .withPermissions(Manifest.permission.WRITE_EXTERNAL_STORAGE,
                         Manifest.permission.CAMERA)
-                .withListener(this).check();
+                .withListener(getActivity()).check();
     }
 
     @Override
@@ -224,9 +237,9 @@ public class MainActivity extends ParentActivity implements
                         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.N) {
                             mSelectedImageUri = Uri.fromFile(fileImageClick);
                         } else {
-                            mSelectedImageUri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", fileImageClick);
+                            mSelectedImageUri = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", fileImageClick);
                         }
-                        Intent intent = new Intent(MainActivity.this, CropPhotoActivity.class);
+                        Intent intent = new Intent(getActivity(), CropPhotoActivity.class);
                         intent.putExtra("cropUri", mSelectedImageUri.toString());
                         startActivityForResult(intent, REQUEST_CODE_CROPPING);
                     }
@@ -239,16 +252,16 @@ public class MainActivity extends ParentActivity implements
             try {
                 mSelectedImageUri = data.getData();
                 if (mSelectedImageUri != null) {
-                    mSelectedImagePath = Constants.convertMediaUriToPath(this, mSelectedImageUri);
-                    Bitmap bitmap = ImageUtils.compressImage(mSelectedImageUri.toString(), getApplicationContext());
+                    mSelectedImagePath = Constants.convertMediaUriToPath(getActivity(), mSelectedImageUri);
+                    Bitmap bitmap = ImageUtils.compressImage(mSelectedImageUri.toString(), getActivity());
                     mSelectedImageUri = getFileUri(bitmap);
                     if (SupportedClass.stringIsNotEmpty(mSelectedImagePath)) {
-                        Intent intent = new Intent(MainActivity.this, CropPhotoActivity.class);
+                        Intent intent = new Intent(getActivity(), CropPhotoActivity.class);
                         intent.putExtra("cropUri", mSelectedImageUri.toString());
                         startActivityForResult(intent, REQUEST_CODE_CROPPING);
                     }
                 } else {
-                    Toast.makeText(this, getString(R.string.please_try_again), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), getString(R.string.please_try_again), Toast.LENGTH_SHORT).show();
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -260,13 +273,13 @@ public class MainActivity extends ParentActivity implements
                     mSelectedImageUri = data.getParcelableExtra("croppedUri");
                     Bitmap bitmap = null;
                     try {
-                        bitmap = Constants.getBitmapFromUriDrip(MainActivity.this, mSelectedImageUri, 1024.0f, 1024.0f);
+                        bitmap = Constants.getBitmapFromUriDrip(getActivity(), mSelectedImageUri, 1024.0f, 1024.0f);
                         mSelectedImageUri = getFileUri(bitmap);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                     if (bitmap != null) {
-                        Intent intent = new Intent(this, EditingPicActivity.class);
+                        Intent intent = new Intent(getActivity(), EditingPicActivity.class);
                         intent.putExtra("bitmap", mSelectedImageUri.toString());
                         startActivity(intent);
                         overridePendingTransition(R.anim.enter, R.anim.exit);
@@ -284,9 +297,16 @@ public class MainActivity extends ParentActivity implements
 
     public Uri getFileUri(Bitmap inImage) {
         try {
-            File tempDir = Environment.getExternalStorageDirectory();
+            File tempDir = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                tempDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+            } else {
+                tempDir = Environment.getExternalStorageDirectory();
+            }
             tempDir = new File(tempDir.getAbsolutePath() + "/.temp/");
-            tempDir.mkdir();
+            if (!tempDir.exists()) {
+                tempDir.mkdir();
+            }
             File tempFile = File.createTempFile("IMG_" + System.currentTimeMillis(), ".jpg", tempDir);
             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
             inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
@@ -363,7 +383,7 @@ public class MainActivity extends ParentActivity implements
     }
 
     private void showSettingsDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Need Storage Permission");
         builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.");
         builder.setPositiveButton("GOTO SETTINGS", (dialog, which) -> {
@@ -403,15 +423,25 @@ public class MainActivity extends ParentActivity implements
             isModelSelected = 5;
             showPicImageDialog();
         }
+        if (v.getId() == R.id.camera_linear) {
+            isModelSelected = 6;
+            isGallerySelected = 1;
+            checkGalleryPermission();
+        }
+        if (v.getId() == R.id.gallery_linear) {
+            isModelSelected = 7;
+            isGallerySelected = 0;
+            checkGalleryPermission();
+        }
 
     }
 
     public void showPicImageDialog() {
-        final Dialog pixDialog = new Dialog(this);
+        final Dialog pixDialog = new Dialog(getActivity());
         pixDialog.setContentView(R.layout.dialog_select_photo);
         pixDialog.setCancelable(false);
         Window window = pixDialog.getWindow();
-        window.setLayout(((SupportedClass.getWidth(MainActivity.this) / 100) * 90), LinearLayout.LayoutParams.WRAP_CONTENT);
+        window.setLayout(((SupportedClass.getWidth(getActivity()) / 100) * 90), LinearLayout.LayoutParams.WRAP_CONTENT);
         pixDialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         LinearLayout camera_item = pixDialog.findViewById(R.id.camera_item);
         LinearLayout gallery_item = pixDialog.findViewById(R.id.gallery_item);
@@ -466,10 +496,10 @@ public class MainActivity extends ParentActivity implements
 
     private void openCamera() {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        Uri photoURI = FileProvider.getUriForFile(getApplicationContext(), BuildConfig.APPLICATION_ID + ".provider", createImageFile());
+        Uri photoURI = FileProvider.getUriForFile(getActivity(), BuildConfig.APPLICATION_ID + ".provider", createImageFile());
         intent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        if (intent.resolveActivity(getApplicationContext().getPackageManager()) != null) {
+        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
             startActivityForResult(intent, REQUEST_CODE_CAMERA);
         }
     }
@@ -492,5 +522,20 @@ public class MainActivity extends ParentActivity implements
     @Override
     public void onPermissionRationaleShouldBeShown(List<PermissionRequest> list, PermissionToken permissionToken) {
         permissionToken.continuePermissionRequest();
+    }
+
+    private void takePermission() {
+        if (Build.VERSION.SDK_INT == Build.VERSION_CODES.R) {
+            try {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                intent.addCategory("android.intent.category,DEFAULT");
+                intent.setData(Uri.parse(String.format("package%s", getActivity().getPackageName())));
+                startActivityForResult(intent, 100);
+            } catch (Exception ex) {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                startActivityForResult(intent, 100);
+            }
+        }
     }
 }

@@ -1,6 +1,5 @@
 package com.photo.editor.picskills.photoeditorpro.utils;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.Cursor;

@@ -53,7 +53,7 @@
             android:layout_marginEnd="10dp"
             android:baselineAligned="false"
             android:orientation="horizontal"
-            android:weightSum="2"
+            android:weightSum="3"
             app:layout_constraintBottom_toTopOf="@+id/adView"
             app:layout_constraintTop_toTopOf="parent">
 
@@ -88,7 +88,7 @@
 
                     <ImageView
                         android:id="@+id/drip_icon"
-                        android:layout_width="60dp"
+                        android:layout_width="40dp"
                         android:layout_height="50dp"
                         android:layout_marginTop="@dimen/margin_2dp"
                         android:layout_marginStart="@dimen/margin_2dp"
@@ -264,36 +264,36 @@
                 </LinearLayout>
             </LinearLayout>
 
-            <!--<LinearLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:orientation="vertical">
-
                 <LinearLayout
-                    android:id="@+id/mirror_layout"
+                    android:id="@+id/gallery_linear"
                     android:layout_width="match_parent"
-                    android:layout_height="204dp"
+                    android:layout_height="100dp"
                     android:layout_marginStart="4dp"
-                    android:background="@drawable/mirror_background"
+                    android:background="@drawable/gallery_background"
                     android:gravity="center"
+                    android:layout_marginBottom="2dp"
                     android:orientation="vertical"
                     tools:ignore="UselessParent">
 
                     <ImageView
-                        android:id="@+id/mirror_icon"
+                        android:id="@+id/galler_icon"
                         android:layout_width="50dp"
                         android:layout_height="40dp"
                         android:contentDescription="@string/txt_collage"
-                        android:src="@drawable/mirror_icon" />
+                        android:src="@drawable/gallery_icon" />
 
                     <TextView
-                        android:id="@+id/mirror"
+                        android:id="@+id/gallery_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:adjustViewBounds="true"
                         android:contentDescription="@string/rectangle"
-                        android:text="@string/mirror"
+                        android:text="@string/gallery"
                         android:textColor="@color/white"
                         android:layout_gravity="center_horizontal"
                         android:textSize="17sp"
@@ -301,7 +301,39 @@
                         app:layout_constraintTop_toTopOf="parent"
                         tools:ignore="RtlSymmetry" />
                 </LinearLayout>
-            </LinearLayout>-->
+                <LinearLayout
+                    android:id="@+id/camera_linear"
+                    android:layout_width="match_parent"
+                    android:layout_height="100dp"
+                    android:layout_marginStart="4dp"
+                    android:background="@drawable/camera_background"
+                    android:gravity="center"
+                    android:layout_marginTop="2dp"
+                    android:orientation="vertical"
+                    tools:ignore="UselessParent">
+
+                    <ImageView
+                        android:id="@+id/camera_icon"
+                        android:layout_width="50dp"
+                        android:layout_height="40dp"
+                        android:contentDescription="@string/txt_collage"
+                        android:src="@drawable/camera_icon" />
+
+                    <TextView
+                        android:id="@+id/camera_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:adjustViewBounds="true"
+                        android:contentDescription="@string/rectangle"
+                        android:text="@string/camera"
+                        android:textColor="@color/white"
+                        android:layout_gravity="center_horizontal"
+                        android:textSize="17sp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:ignore="RtlSymmetry" />
+                </LinearLayout>
+            </LinearLayout>
         </LinearLayout>
 
         <RelativeLayout

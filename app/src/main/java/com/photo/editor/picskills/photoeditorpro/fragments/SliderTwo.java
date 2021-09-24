@@ -10,13 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.google.android.ads.nativetemplates.NativeTemplateStyle;
-import com.google.android.ads.nativetemplates.TemplateView;
-import com.google.android.gms.ads.AdListener;
-import com.google.android.gms.ads.AdLoader;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.nativead.NativeAd;
 import com.photo.editor.picskills.photoeditorpro.R;
 
 import java.util.Objects;
@@ -32,7 +25,6 @@ public class SliderTwo extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private TemplateView templateView;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -74,31 +66,6 @@ public class SliderTwo extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_slider_two, container, false);
-        templateView = view.findViewById(R.id.adLayout);
-        loadAd();
         return view;
-    }
-    void loadAd() {
-        AdRequest adRequest = new AdRequest.Builder().build();
-        AdLoader adLoader = new AdLoader.Builder(requireActivity(), getString(R.string.admob_native_ads_id))
-                .forNativeAd(new NativeAd.OnNativeAdLoadedListener() {
-                    private ColorDrawable background;
-                    @Override
-                    public void onNativeAdLoaded(NativeAd nativeAd) {
-                        NativeTemplateStyle styles = new
-                                NativeTemplateStyle.Builder().withMainBackgroundColor(background).build();
-
-                        templateView.setStyles(styles);
-                        templateView.setNativeAd(nativeAd);
-                    }
-                })
-                .withAdListener(new AdListener() {
-                    @Override
-                    public void onAdFailedToLoad(LoadAdError adError) {
-                        // Handle the failure by logging, altering the UI, and so on.
-                        Log.i("tag","Ad failed!");
-                    }
-                }).build();
-        adLoader.loadAd(adRequest);
     }
 }

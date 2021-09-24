@@ -80,9 +80,8 @@ import java.util.Objects;
 import static com.google.android.gms.common.util.CollectionUtils.listOf;
 import static com.photo.editor.picskills.photoeditorpro.activities.FilterLabActivity.notifyMediaScannerService;
 
-public class EditingPicActivity extends AppCompatActivity implements View.OnClickListener,
-        SeekBar.OnSeekBarChangeListener, GradientFilterAdapter.GradientFilterClickListener,
-        SimpleFilterAdapter.MirrorClickListener {
+public class EditingPicActivity extends AppCompatActivity implements View.OnClickListener, GradientFilterAdapter.GradientFilterClickListener,
+        SimpleFilterAdapter.SimpleFilterClickListener {
 
     //simple filter list and packs list
     private ArrayList<SimpleFilterModel> simpleFilterArrayList = new ArrayList();
@@ -182,7 +181,6 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
         txtWings.setOnClickListener(this);
         modelSelected();
         //txtDrip.setOnClickListener(this);
-        seekBar.setOnSeekBarChangeListener(this);
         //add items in list
         addItemSimpleList();
         gradientListItem();
@@ -215,6 +213,12 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
         }
         if (MainActivity.isModelSelected == 5) {
             txtGradient.performClick();
+        }
+        if (MainActivity.isModelSelected == 6) {
+            txtFilter.performClick();
+        }
+        if (MainActivity.isModelSelected == 7) {
+            txtFilter.performClick();
         }
     }
 
@@ -642,7 +646,12 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
 
     private Uri getFileUri(Bitmap inImage) {
         try {
-            File tempDir = Environment.getExternalStorageDirectory();
+            File tempDir = null;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                tempDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+            } else {
+                tempDir = Environment.getExternalStorageDirectory();
+            }
             tempDir = new File(tempDir.getAbsolutePath() + "/.temp/");
             tempDir.mkdir();
             File tempFile = File.createTempFile("IMG_" + System.currentTimeMillis(), ".jpg", tempDir);
@@ -661,22 +670,6 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
             ex.printStackTrace();
             return null;
         }
-    }
-
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
-
     }
 
     @Override
@@ -1009,25 +1002,12 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
 
                             handler.post(() -> {
                                 //btnPersonImage.setImageBitmap(result);
+
                                 Glide.with(this).load(result).into(btnPersonImage);
                                 getDestProviderUri(new File(Objects.requireNonNull(getFileUri(result)).getPath()));
                                 isFilterUri = true;
                                 // bgFilter.colorFilter = ColorMatrixColorFilter(src)
                             });
-
-                                /* if (orginalBitmap != null) {
-
-                                 filterBitmap = orginalBitmap!!.copy(Bitmap.Config.ARGB_8888, true)
-                                 // val ret = Bitmap.createBitmap(copyMainBitmap.width, copyMainBitmap.height, copyMainBitmap.config)
-                                 val canvas = Canvas(filterBitmap!!)
-                                 canvas.drawBitmap(filterBitmap!!, 0f, 0f, paint)
-
-                                 handler.post {
-                                     Log.e("myThread", Thread.currentThread().name.toString())
-                                     bgFilter.setImageBitmap(filterBitmap)
-                                 }
-
-                             }*/
 
                         }
 
@@ -1123,20 +1103,9 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
                             ColorMatrix colorMatrix = new ColorMatrix();
                             colorMatrix.set(src);
 
-                                /*val paint = Paint()
-                            paint.colorFilter = ColorMatrixColorFilter(src)*/
-
                             Paint paint = new Paint();
-                            //paint.blendMode = BlendMode.OVERLAY
-                            //paint.setXfermode(xfermode);
-                            //paint.blendMode =
                             paint.setColorFilter(new ColorMatrixColorFilter(src));
-                                /*   val originalBitmap: Bitmap? = ImageUtils.createRankingImg(
-                                applicationContext,
-                                R.drawable.person_image
-                            )*/
-                            //ImageUtils.getResizedBitmap(,1024)
-                            //val originalBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.person_image)
+
                             result =
                                     originalBitmap.copy(Bitmap.Config.ARGB_8888, true);
                             Canvas canvas = new Canvas(result);
@@ -1148,22 +1117,7 @@ public class EditingPicActivity extends AppCompatActivity implements View.OnClic
                                 getDestProviderUri(new File(Objects.requireNonNull(getFileUri(result)).getPath()));
 
                                 isFilterUri = true;
-                                // bgFilter.colorFilter = ColorMatrixColorFilter(src)
                             });
-
-                                /* if (orginalBitmap != null) {
-
-                                 filterBitmap = orginalBitmap!!.copy(Bitmap.Config.ARGB_8888, true)
-                                 // val ret = Bitmap.createBitmap(copyMainBitmap.width, copyMainBitmap.height, copyMainBitmap.config)
-                                 val canvas = Canvas(filterBitmap!!)
-                                 canvas.drawBitmap(filterBitmap!!, 0f, 0f, paint)
-
-                                 handler.post {
-                                     Log.e("myThread", Thread.currentThread().name.toString())
-                                     bgFilter.setImageBitmap(filterBitmap)
-                                 }
-
-                             }*/
 
                         }
 

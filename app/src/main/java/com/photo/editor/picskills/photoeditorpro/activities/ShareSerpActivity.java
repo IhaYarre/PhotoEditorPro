@@ -37,7 +37,7 @@ public class ShareSerpActivity extends ParentActivity {
                 /*FullScreenAdManager.fullScreenAdsCheckPref(ShareActivity.this, FullScreenAdManager.ALL_PREFS.ATTR_ON_HOME_SCREEN, new FullScreenAdManager.GetBackPointer() {
                     @Override
                     public void returnAction() {*/
-                Intent finishIntent = new Intent(ShareSerpActivity.this, CameraTestActivity.class);
+                Intent finishIntent = new Intent(ShareSerpActivity.this, MainActivity.class);
                 finishIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(finishIntent);
                 overridePendingTransition(R.anim.enter, R.anim.exit);

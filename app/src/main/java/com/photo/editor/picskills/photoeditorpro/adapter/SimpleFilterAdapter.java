@@ -20,15 +20,15 @@ import java.util.ArrayList;
 
 public class SimpleFilterAdapter extends RecyclerView.Adapter<SimpleFilterAdapter.SimpleViewHolder> {
     private ArrayList<SimpleFilterModel> simpleFilterArrayListJson;
-    private MirrorClickListener listener;
+    private SimpleFilterClickListener listener;
     private int rowIndex = -1;
 
-    public SimpleFilterAdapter(ArrayList<SimpleFilterModel> simpleFilterArrayListJson, MirrorClickListener listener) {
+    public SimpleFilterAdapter(ArrayList<SimpleFilterModel> simpleFilterArrayListJson, SimpleFilterClickListener listener) {
         this.simpleFilterArrayListJson = simpleFilterArrayListJson;
         this.listener = listener;
     }
 
-    public interface MirrorClickListener {
+    public interface SimpleFilterClickListener {
         void simpleFilterItemClick(SimpleFilterModel drawable, int position);
     }
 

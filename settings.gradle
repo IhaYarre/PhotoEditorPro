@@ -1,3 +1,2 @@
 rootProject.name = "PhotoEditorPro"
 include ':app'
-include ':nativetemplates'

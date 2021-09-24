@@ -8,7 +8,7 @@
         <ImageView
             android:id="@+id/slide_image_one"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="288dp"
             android:layout_centerHorizontal="true"
             android:background="@drawable/main_page_pic"
             android:orientation="vertical" />

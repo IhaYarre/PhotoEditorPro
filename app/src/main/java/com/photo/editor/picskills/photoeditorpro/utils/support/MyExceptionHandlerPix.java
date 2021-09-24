@@ -6,7 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 
-import com.photo.editor.picskills.photoeditorpro.activities.CameraTestActivity;
+import com.photo.editor.picskills.photoeditorpro.activities.MainActivity;
 import com.photo.editor.picskills.photoeditorpro.utils.FilterApplication;
 
 public class MyExceptionHandlerPix implements Thread.UncaughtExceptionHandler {
@@ -20,9 +20,9 @@ public class MyExceptionHandlerPix implements Thread.UncaughtExceptionHandler {
     public void uncaughtException(Thread thread, Throwable ex) {
         Intent intent = null;
         if (activity != null) {
-            intent = new Intent(activity, CameraTestActivity.class);
+            intent = new Intent(activity, MainActivity.class);
         } else if (FilterApplication.getContext() != null) {
-            intent = new Intent(FilterApplication.getContext(), CameraTestActivity.class);
+            intent = new Intent(FilterApplication.getContext(), MainActivity.class);
         }
 
 
