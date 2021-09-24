@@ -1,1 +1,0 @@
-# PhotoEditorPro
